@@ -4,7 +4,8 @@ import Data.Map as M
 import Data.Set as S
 import Control.Monad.RWS
 import Data.Maybe
-import Debug.Trace
+
+-- Дословное переложение примера из раздела 2.3 main.pdf, просто чтобы погрузиться в тему
 
 type Input = String -- need to track pos Map Pos Char
 type Pos = Int
