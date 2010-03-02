@@ -9,14 +9,14 @@ import Data.Maybe
 
 type Input = String -- need to track pos Map Pos Char
 type Pos = Int
-type LabelId = Int
+type LabelId = String
 data Label = L { ident::LabelId, f::Parser Result }
 instance Eq Label where
   (L id1 _) == (L id2 _) = id1 == id2
 instance Ord Label where
   compare (L id1 _) (L id2 _) = compare id1 id2
 instance Show Label where
-  show (L id1 _) = "L " ++ show id1
+  show (L id1 _) = "L_" ++ id1
 type Node = (Label, Pos)
 type R = [(Label, Node, Pos)]
 type U = Map Pos [(Label,Node)]
@@ -63,16 +63,16 @@ pop u i = do
     then forM_ (S.elems (pts!u)) $ \v -> add label v i
     else return ()
   
-l_666 = L 666 undefined
+l_666 = L "666" undefined
 node_0 = (l_666, (-1))
 parse = do
   tellLn "parse"
   add l_s node_0 0
   goto l_0
   
-goto (L id f) = tellLn ("goto " ++ show id) >> f 
+goto (L id f) = tellLn ("goto L_" ++ id) >> f 
 
-l_0 = L 0 $ do
+l_0 = L "0" $ do
   r <- gets er
   c_i <- gets curr_i
   inp <- gets input
@@ -87,7 +87,7 @@ l_0 = L 0 $ do
          then return Success
          else return Failure
               
-l_s = L 5 $ do
+l_s = L "s" $ do
   tellLn "l_s"
   c_i <- gets curr_i
   c_u <- gets curr_u
@@ -103,7 +103,7 @@ l_s = L 5 $ do
                     goto l_0
             else tellLn "l_s, case 3" >> goto l_0
                              
-l_s0 = L 50 $ do
+l_s0 = L "s0" $ do
   tellLn "l_s0"
   c_i <- gets curr_i
   c_u <- gets curr_u
@@ -114,7 +114,7 @@ l_s0 = L 50 $ do
              goto l_s
      else goto l_0
           
-l_s0' = L 501 $ do
+l_s0' = L "s0'" $ do
   tellLn "l_s0'"
   c_i <- gets curr_i
   c_u <- gets curr_u
@@ -122,7 +122,7 @@ l_s0' = L 501 $ do
   pop c_u c_i
   goto l_0
   
-l_s1 = L 51 $ do
+l_s1 = L "s1" $ do
   tellLn "l_s1"
   c_i <- gets curr_i
   c_u <- gets curr_u
@@ -132,7 +132,7 @@ l_s1 = L 51 $ do
              goto l_0
      else goto l_0
 
-l_s2 = L 52 $ do
+l_s2 = L "s2" $ do
   tellLn "l_s2"
   c_i <- gets curr_i
   c_u <- gets curr_u
