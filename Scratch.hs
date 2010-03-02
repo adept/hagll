@@ -57,10 +57,13 @@ add label u i = do
 pop u i = do
   tellLn $ "pop" ++ show (u,i)
   let (label, _) = u
-  pts <- gets parents
+  prnts <- gets parents
   modify (\s -> s{pe = S.insert (u,i) (pe s)})
-  if u `M.member` pts 
-    then forM_ (S.elems (pts!u)) $ \v -> add label v i
+  p <- gets pe
+  tellLn $ "  P is now " ++ show p
+  if u `M.member` prnts 
+    then do tellLn $ "  Has parents: " ++ show prnts
+            forM_ (S.elems (prnts!u)) $ \v -> add label v i
     else return ()
   
 l_666 = L "666" undefined
@@ -109,7 +112,8 @@ l_s0 = L "s0" $ do
   c_u <- gets curr_u
   inp <- gets input
   if inp!!c_i == 'a'
-     then do c_u <- create l_s0' c_u (c_i + 1)
+     then do modify (\s -> s{curr_i=c_i+1})
+             c_u <- create l_s0' c_u (c_i + 1)
              modify (\s -> s{curr_u = c_u})
              goto l_s
      else goto l_0
@@ -128,7 +132,8 @@ l_s1 = L "s1" $ do
   c_u <- gets curr_u
   inp <- gets input
   if inp!!c_i == 'a'
-     then do pop c_u (c_i+1)
+     then do modify (\s -> s{curr_i=c_i+1})
+             pop c_u (c_i+1)
              goto l_0
      else goto l_0
 
@@ -143,6 +148,6 @@ l_s2 = L "s2" $ do
     else goto l_0
          
 main = do
-  let (ret, log) = evalRWS parse () (mkPS "a$")
+  let (ret, log) = evalRWS parse () (mkPS "aaaaaa$")
   print ret
   putStrLn log
