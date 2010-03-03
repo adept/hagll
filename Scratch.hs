@@ -7,9 +7,10 @@ import Data.Maybe
 
 -- Дословное переложение примера из раздела 2.3 main.pdf, просто чтобы погрузиться в тему
 
-type Input = String -- need to track pos Map Pos Char
+type Input = String
 type Pos = Int
 type LabelId = String
+
 data Label = L { ident::LabelId, f::Parser Result }
 instance Eq Label where
   (L id1 _) == (L id2 _) = id1 == id2
@@ -17,6 +18,7 @@ instance Ord Label where
   compare (L id1 _) (L id2 _) = compare id1 id2
 instance Show Label where
   show (L id1 _) = "L_" ++ id1
+
 type Node = (Label, Pos)
 type R = [(Label, Node, Pos)]
 type U = Map Pos [(Label,Node)]
@@ -25,8 +27,10 @@ type G = Set Node
 type E = Map Node (Set Node) -- parents
 
 data ParserState = PS { gee :: G, pee :: P, er::R, pe::P, curr_i :: Pos, curr_u :: Node, input::Input, parents :: E, yu::U } deriving Show
-mkPS inp = PS S.empty S.empty [] S.empty 0 node_0 inp M.empty M.empty
+mkPS inp = PS S.empty S.empty [] S.empty 0 node_root inp M.empty M.empty
+
 type Parser a = RWS () String ParserState a
+
 tellLn s = tell $ s ++ "\n"
 
 data Result = Success | Failure deriving Show
@@ -42,7 +46,7 @@ create label u i = do
             modify (\s -> s{gee = S.insert v g})
             forM_ [ j | (x,j) <- S.elems p, x == v ] $ \j -> add label u j
             return v
-    else return (label, i) -- CHECK
+    else return (label, i) 
 
 add :: Label -> Node -> Pos -> Parser ()
 add label u i = do
@@ -66,11 +70,11 @@ pop u i = do
             forM_ (S.elems (prnts!u)) $ \v -> add label v i
     else return ()
   
-l_666 = L "666" undefined
-node_0 = (l_666, (-1))
+l_root = L "root" undefined
+node_root = (l_root, (-1))
 parse = do
   tellLn "parse"
-  add l_s node_0 0
+  add l_s node_root 0
   goto l_0
   
 goto (L id f) = tellLn ("goto L_" ++ id) >> f 
