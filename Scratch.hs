@@ -6,6 +6,7 @@ import Control.Monad.RWS
 import Data.Maybe
 
 -- Дословное переложение примера из раздела 2.3 main.pdf, просто чтобы погрузиться в тему
+-- В main.pdf баги: пропущено изменение U в add, увеличение c_i в L_{S_0} и L_{S_1}
 
 type Input = String
 type Pos = Int
@@ -155,3 +156,5 @@ main = do
   let (ret, log) = evalRWS parse () (mkPS "aaaaaa$")
   print ret
   putStrLn log
+  
+-- На будущее: http://okmij.org/ftp/Haskell/numbered-monad.txthttp://okmij.org/ftp/Haskell/numbered-monad.txt  
