@@ -27,7 +27,7 @@ type P = Set (Node, Pos)
 type G = Set Node
 type E = Map Node (Set Node) -- parents
 
-data ParserState = PS { gee :: G, pee :: P, er::R, pe::P, curr_i :: Pos, curr_u :: Node, input::Input, parents :: E, yu::U } deriving Show
+data ParserState = PS { gee :: G, er::R, pe::P, curr_i :: Pos, curr_u :: Node, input::Input, parents :: E, yu::U } deriving Show
 mkPS inp = PS S.empty S.empty [] S.empty 0 node_root inp M.empty M.empty
 
 type Parser a = RWS () String ParserState a
@@ -157,4 +157,4 @@ main = do
   print ret
   putStrLn log
   
--- На будущее: http://okmij.org/ftp/Haskell/numbered-monad.txthttp://okmij.org/ftp/Haskell/numbered-monad.txt  
+-- На будущее: http://okmij.org/ftp/Haskell/numbered-monad.txt
