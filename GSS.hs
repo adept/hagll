@@ -37,8 +37,8 @@ mkGState startLabel =
 create :: (Eq lab, Ord lab) => lab -> Node lab -> Pos -> GState lab
        -> (GState lab, Node lab)
 create label u i oldgs =
-    if v `S.member` g
-    then
+    if v `S.member` g && u `S.member` (parents oldgs M.! v)
+    then -- nothing to do
         (oldgs, v)
     else
         (add_popped.connect_v.insert_v $ oldgs, v)
