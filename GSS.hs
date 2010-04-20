@@ -1,5 +1,5 @@
 module GSS
- ( GState, create, add, mkGState )
+ ( GState(yu,curr_u,er), create, add, mkGState )
 where
 
 import Data.Map as M
@@ -8,7 +8,7 @@ import Data.Set as S
 type Pos = Int
 type Node lab = (lab, Pos)
 type R lab = [(lab, Node lab, Pos)]
-type U lab = Map Pos [(lab,Node lab)]
+type U lab = Map Pos [(lab,Node lab)] -- TODO: flatten U, like Set (lab, Node lab, pos)
 type P lab = Set (Node lab, Pos)
 type G lab = Set (Node lab)
 type E lab = Map (Node lab) (Set (Node lab)) -- parents
