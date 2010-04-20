@@ -1,5 +1,5 @@
 module GSS
- ( GState(yu,curr_u,er), create, add, mkGState )
+ ( GState(yu,curr_u,er), create, add, pop, mkGState )
 where
 
 import Data.Map as M
@@ -37,8 +37,8 @@ mkGState startLabel =
 create :: (Eq lab, Ord lab) => lab -> Node lab -> Pos -> GState lab
        -> (GState lab, Node lab)
 create label u i oldgs =
-    if v `S.member` g
-    then
+    if v `S.member` g && u `S.member` (parents oldgs M.! v)
+    then -- nothing to do
         (oldgs, v)
     else
         (add_popped.connect_v.insert_v $ oldgs, v)
@@ -60,15 +60,12 @@ add label u i oldgs =
     yu_ = yu oldgs
     u_i = maybe [] id $ M.lookup i yu_
 
-{-
-pop u i = do
-  let (label, _) = u
-  prnts <- gets parents
-  modify (\s -> s{pe = S.insert (u,i) (pe s)})
-  p <- gets pe
-  tellLn $ "  P is now " ++ show p
-  if u `M.member` prnts
-    then do tellLn $ "  Has parents: " ++ show prnts
-            forM_ (S.elems (prnts!u)) $ \v -> add label v i
-    else return ()
--}
+pop :: (Eq lab, Ord lab) => Node lab -> Pos -> GState lab -> GState lab
+pop u i oldgs = if is_root then oldgs else newgs
+    where
+    (label, _) = u
+    prnts = parents oldgs
+    is_root = u `M.member` prnts
+    update_pe gstate = gstate { pe = S.insert (u,i) (pe gstate) }
+    create_descriptors gstate = foldl (\gs parent -> add label parent i gs) gstate (S.elems (prnts!u))
+    newgs = create_descriptors . update_pe $ oldgs
