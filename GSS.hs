@@ -15,7 +15,6 @@ type E lab = Map (Node lab) (Set (Node lab)) -- parents
 
 data GState lab = GState
     { gee :: G lab
-    , pee :: P lab
     , er  :: R lab
     , pe  :: P lab
     , curr_u :: Node lab
@@ -33,7 +32,7 @@ create label u i oldgs =
         (add_popped.connect_v.insert_v $ oldgs, v)
     where
     g = gee oldgs
-    p = pee oldgs
+    p = pe oldgs
     v = (label, i)
     insert_v gstate = gstate { gee = S.insert v g }
     connect_v gstate = gstate { parents = M.insertWith (S.union) v (S.singleton u) (parents gstate) }
