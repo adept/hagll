@@ -1,5 +1,5 @@
 module GSS
- ( GState, create, add )
+ ( GState, create, add, mkGState )
 where
 
 import Data.Map as M
@@ -21,6 +21,18 @@ data GState lab = GState
     , parents :: E lab
     , yu  :: U lab
     }
+
+mkGState startLabel = 
+  GState { gee = S.fromList [ u0, u1 ]
+         , parents = M.singleton u1 (S.singleton u0)
+         , curr_u = u1
+         , pe = S.empty
+         , er = []
+         , yu = M.empty
+         }
+  where
+    u0 = undefined -- FIXME: root node
+    u1 = (startLabel, 0)
 
 create :: (Eq lab, Ord lab) => lab -> Node lab -> Pos -> GState lab
        -> (GState lab, Node lab)
