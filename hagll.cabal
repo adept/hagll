@@ -1,0 +1,42 @@
+Name:    HaGLL
+Version: 0.0.1
+License: BSD3
+License-File: LICENSE
+Author: Dmitry Astapov <dastapov@gmail.com>, Roman Cheplyaka <roma@ro-che.info>
+Maintainer: Dmitry Astapov <dastapov@gmail.com>, Roman Cheplyaka <roma@ro-che.info>
+Category: Junk
+Stability: alpha
+Cabal-Version:   >= 1.2
+Build-type:	Simple
+Synopsis: GLL parsing combinators
+Description: TBD
+
+Tested-With:        GHC >=6.10.4
+
+Extra-source-files: README 
+
+flag test
+    default: True
+
+flag coverage
+    default: True
+
+
+Executable  Tests
+  Hs-Source-Dirs: .
+  Main-Is:       Tests.hs
+  if flag(test)
+    Build-Depends: base >=3 && <=5, HUnit, QuickCheck >= 2.0.0 , test-framework, test-framework-quickcheck2, test-framework-hunit, mtl, containers
+    Other-Modules: GSS, SAB
+  else
+    Buildable: False
+
+Executable  CoverageTests
+  Hs-Source-Dirs: .
+  Main-Is:       Tests.hs
+  if flag(coverage)
+    Build-Depends: base >=3 && <=5, mtl, containers
+    Other-Modules: GSS, SAB
+    GHC-Options: -fhpc
+  else
+    Buildable: False
