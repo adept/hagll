@@ -60,11 +60,10 @@ add label u i oldgs =
     yu_ = yu oldgs
 
 pop :: (Eq lab, Ord lab) => Node lab -> Pos -> GState lab -> GState lab
-pop u i oldgs = if is_root then oldgs else newgs
+pop u i oldgs = if u == Root then oldgs else newgs
     where
     Node (label, _) = u
     prnts = parents oldgs
-    is_root = u `M.member` prnts
     update_pe gstate = gstate { pe = S.insert (u,i) (pe gstate) }
     create_descriptors gstate = foldl (\gs parent -> add label parent i gs) gstate (S.elems (prnts!u))
     newgs = create_descriptors . update_pe $ oldgs
