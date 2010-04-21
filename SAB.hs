@@ -156,8 +156,8 @@ l_b = L "b" $ do
 
 main = do
   let (ret, log) = evalRWS parse () (mkPS "aad$")
-  putStr "Result is "; print ret
-  putStrLn "\nLOG:"
+  putStrLn "LOG:"
   putStrLn log
+  putStr "\nResult is "; print ret
   
 
