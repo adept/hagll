@@ -60,11 +60,17 @@ popCurrent = do
   modify (\s -> s{gss=newgs})
 
 incr = modify (\s -> s{curr_i = (curr_i s) + 1})
+
+logState mark = do
+  tell mark
+  tell ". "
+  ps <- get
+  tellLn $ show ps
 --- Переложение стр. 119 ldta:
 mkPS inp = PS { gss = mkGState l_0, curr_i = 0, input = inp }
 
 parse = do
-  tellLn "parse"
+  logState "parse"
   goto l_s
 
 l_s = L "s" $ do
@@ -76,6 +82,7 @@ l_s = L "s" $ do
   when (inp!!i `elem` "ab") $ addToCurrent l_s2
   when (inp!!i `elem` "d$") $ addToCurrent l_s3
   
+  logState "l_s"
   goto l_0
   
 
@@ -85,20 +92,22 @@ l_0 = L "0" $ do
   let r = er gss_
   let m = length inp + 1
       
-  tellLn "l_0"
+  logState "l_0"
   if not (Prelude.null r) 
-    then do let (label, u, i) = head r
-            tellLn $ "  l_0, R is " ++ show r
-            modify (\s -> s{gss = gss_{curr_u = u, er = tail r}, curr_i = i})
+    then do let (label, u, i) = last r
+            tellLn $ printf "  L=%s; u=%s; i=%d" (show label) (show u) i
+            modify (\s -> s{gss = gss_{curr_u = u, er = init r}, curr_i = i})
             goto label
             
     else if (l_0, Root,m) `S.member` (yu gss_)
          then return Success
-         else return Failure
+         else do tell "U is: "
+                 tellLn (show $ yu gss_)
+                 return Failure
     
 l_s1 = L "s1" $ do
-  tellLn "l_s1"
   createAtCurrent l_1
+  logState "l_s1"
   goto l_a
   
 l_1 = L "1" $ do
@@ -132,8 +141,10 @@ l_a = L "a" $ do
   if (inp!!i `elem` "ac") 
     then do incr
             popCurrent
+            tell "branch 1. "; logState "l_a"
             goto l_0
-    else goto l_0
+    else do tell "branch 2. "; logState "l_a"
+            goto l_0
 
 l_b = L "b" $ do
   (PS gss_ i inp) <- get
@@ -144,8 +155,9 @@ l_b = L "b" $ do
     else goto l_0
 
 main = do
-  let (ret, log) = evalRWS parse () (mkPS "aaad$")
-  print ret
+  let (ret, log) = evalRWS parse () (mkPS "aad$")
+  putStr "Result is "; print ret
+  putStrLn "\nLOG:"
   putStrLn log
   
 
