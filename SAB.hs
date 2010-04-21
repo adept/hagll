@@ -80,8 +80,10 @@ l_s = L "s" $ do
 
 l_0 = L "0" $ do
   gss_ <- gets gss
+  inp <- gets input
   let r = er gss_
-  
+  let m = length inp + 1
+      
   tellLn "l_0"
   if not (Prelude.null r) 
     then do let (label, u, i) = head r
@@ -89,13 +91,9 @@ l_0 = L "0" $ do
             modify (\s -> s{gss = gss_{curr_u = u, er = tail r}, curr_i = i})
             goto label
             
-    else if (l_0, root_node) `elem` (yu gss_)!m
+    else if (l_0, Root) `elem` (yu gss_)!m
          then return Success
          else return Failure
-              
-  where
-    root_node = undefined
-    m = undefined -- length of input + 1
     
 l_s1 = L "s1" $ do
   tellLn "l_s1"
