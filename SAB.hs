@@ -141,13 +141,14 @@ l_s1 = L "s1" $ do
   goto l_a
   
 l_1 = L "1" $ do
-  tellLn "l_1"
   createAtCurrent l_2
+  logState "l_1"
   goto l_s
   
 l_2 = L "2" $ do
   (PS gss_ i inp) <- get
-  when (inp!!i == 'd') $ popCurrent
+  when (inp!!i == 'd') $ do incr
+                            popCurrent
   goto l_0
          
 l_s2 = L "s2" $ do
