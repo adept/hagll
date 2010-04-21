@@ -8,8 +8,8 @@ module SAB (main) where
 
 import GSS
 
-import Data.Map as M
--- import Data.Set as S
+-- import Data.Map as M
+import Data.Set as S
 import Control.Monad.RWS
 import Data.Maybe
 
@@ -91,7 +91,7 @@ l_0 = L "0" $ do
             modify (\s -> s{gss = gss_{curr_u = u, er = tail r}, curr_i = i})
             goto label
             
-    else if (l_0, Root) `elem` (yu gss_)!m
+    else if (l_0, Root,m) `S.member` (yu gss_)
          then return Success
          else return Failure
     
