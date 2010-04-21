@@ -1,12 +1,12 @@
 module GSS
- ( GState(yu,curr_u,er), create, add, pop, mkGState )
+ ( GState(yu,curr_u,er), Node(Root), create, add, pop, mkGState )
 where
 
 import Data.Map as M
 import Data.Set as S
 
 type Pos = Int
-type Node lab = (lab, Pos)
+data Node lab = Root | Node (lab, Pos) deriving (Eq,Ord,Show) -- TODO: remove Show in production
 type R lab = [(lab, Node lab, Pos)]
 type U lab = Map Pos [(lab,Node lab)] -- TODO: flatten U, like Set (lab, Node lab, pos)
 type P lab = Set (Node lab, Pos)
@@ -31,8 +31,8 @@ mkGState startLabel =
          , yu = M.empty
          }
   where
-    u0 = undefined -- FIXME: root node
-    u1 = (startLabel, 0)
+    u0 = Root
+    u1 = Node (startLabel, 0)
 
 create :: (Eq lab, Ord lab) => lab -> Node lab -> Pos -> GState lab
        -> (GState lab, Node lab)
@@ -45,7 +45,7 @@ create label u i oldgs =
     where
     g = gee oldgs
     p = pe oldgs
-    v = (label, i)
+    v = Node (label, i)
     insert_v gstate = gstate { gee = S.insert v g }
     connect_v gstate = gstate { parents = M.insertWith (S.union) v (S.singleton u) (parents gstate) }
     add_popped gstate = foldl (\gs j -> add label u j gs) gstate [ j | (x,j) <- S.elems p, x == v ]
@@ -63,7 +63,7 @@ add label u i oldgs =
 pop :: (Eq lab, Ord lab) => Node lab -> Pos -> GState lab -> GState lab
 pop u i oldgs = if is_root then oldgs else newgs
     where
-    (label, _) = u
+    Node (label, _) = u
     prnts = parents oldgs
     is_root = u `M.member` prnts
     update_pe gstate = gstate { pe = S.insert (u,i) (pe gstate) }
