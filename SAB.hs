@@ -34,7 +34,7 @@ type Parser a = RWS () String ParserState a
 
 tellLn s = tell $ s ++ "\n"
 
-data Result = Success | Failure deriving Show
+data Result = Success | Failure deriving (Eq,Show)
 
 goto (L id f) = tellLn ("goto L_" ++ id) >> f 
 
@@ -75,14 +75,9 @@ correct mark yu_ cu_ r_ inp_ = do
 --- Переложение стр. 119 ldta:
 mkPS inp = PS { gss = mkGState l_0, curr_i = 0, input = inp }
 
-parse = do
-  logState "parse"
-  goto l_s
-
 l_s = L "s" $ do
   inp <- gets input
   i <- gets curr_i
-  g <- gets gss  
 
   when (inp!!i `elem` "ac") $ addToCurrent l_s1
   when (inp!!i `elem` "ab") $ addToCurrent l_s2
@@ -185,10 +180,19 @@ l_b = L "b" $ do
             goto l_0
     else goto l_0
 
-main = do
-  let (ret, log) = evalRWS parse () (mkPS "aad$")
-  putStrLn "LOG:"
-  putStrLn log
-  putStr "\nResult is "; print ret
+-- Driver
   
+parse showLog input expected = do
+  let (ret, log) = evalRWS (goto l_s) () (mkPS $ input++"$")
+  when showLog $ do putStrLn "LOG:"
+                    putStrLn log
+                    putStrLn ""
+  putStrLn $ printf "For input %s result is %s" input (show ret)
+  when (ret /= expected) $ error $ printf "Error: expected %s" (show expected)
 
+-- TODO: do proper tests with "test-framework"
+main = do
+  let verbose = True
+  parse verbose "aad" Success 
+  parse verbose "acd" Success
+  parse verbose "add" Failure
