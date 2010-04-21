@@ -2,11 +2,12 @@
 -- Парсер грамматики из ldta:
 --   S ::= A S d | B S | epsilon
 --   A ::= a | c
---   B ::= a |b
+--   B ::= a | b
 
 module SAB (main) where
 
 import GSS
+import Text.Printf
 
 -- import Data.Map as M
 import Data.Set as S
@@ -27,7 +28,7 @@ instance Show Label where
 
 data ParserState = PS { gss :: GState Label, curr_i :: Pos, input::Input}
 instance Show ParserState where
-  show (PS _ u inp) = "input[i]=" ++ (take 10 inp)
+  show (PS gss_ i inp) = printf "{{{STATE: U=%s; c_u=%s; R=%s; input[i]=%s }}}" (show $ yu gss_) (show $ curr_u gss_) (show $ er gss_) (take 10 (drop i inp))
 
 type Parser a = RWS () String ParserState a
 
