@@ -1,5 +1,5 @@
 module GSS
- ( GState(yu,curr_u,er), Node(..), create, add, pop, mkGState )
+ ( GState(yu,curr_u,er,parents), Node(..), create, add, pop, mkGState )
 where
 
 import Data.Map as M

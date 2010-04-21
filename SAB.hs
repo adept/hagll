@@ -4,12 +4,12 @@
 --   A ::= a | c
 --   B ::= a | b
 
-module SAB (main) where
+module SAB (parse, Result(..)) where
 
 import GSS
 import Text.Printf
 
--- import Data.Map as M
+import Data.Map as M hiding (fromList)
 import Data.Set as S
 import Control.Monad.RWS
 import Data.Maybe
@@ -180,9 +180,9 @@ l_b = L "b" $ do
             goto l_0
     else goto l_0
 
--- Driver
+-- Driver(s)
   
-parse showLog input expected = do
+testParse showLog input expected = do
   let (ret, log) = evalRWS (goto l_s) () (mkPS $ input++"$")
   when showLog $ do putStrLn "LOG:"
                     putStrLn log
@@ -190,9 +190,5 @@ parse showLog input expected = do
   putStrLn $ printf "For input %s result is %s" input (show ret)
   when (ret /= expected) $ error $ printf "Error: expected %s" (show expected)
 
--- TODO: do proper tests with "test-framework"
-main = do
-  let verbose = True
-  parse verbose "aad" Success 
-  parse verbose "acd" Success
-  parse verbose "add" Failure
+parse input = ret
+  where (ret, _) = evalRWS (goto l_s) () (mkPS $ input++"$")
