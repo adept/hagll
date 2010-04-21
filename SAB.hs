@@ -15,7 +15,6 @@ import Control.Monad.RWS
 import Data.Maybe
 
 type Input = String
-type Pos = Int
 type LabelId = String
 
 data Label = L { ident::LabelId, f::Parser Result }
