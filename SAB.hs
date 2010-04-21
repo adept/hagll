@@ -51,6 +51,14 @@ createAtCurrent label = do
   let (newgs, new_u) = create label (curr_u oldgs) i oldgs
   modify (\s -> s { gss = newgs {curr_u = new_u}})
   
+popCurrent :: Parser ()
+popCurrent = do
+  oldgss <- gets gss
+  i <- gets curr_i
+  let newgs = pop (curr_u oldgss) i oldgss
+  modify (\s -> s{gss=newgs})
+
+incr = modify (\s -> s{curr_i = (curr_i s) + 1})
 --- Переложение стр. 119 ldta:
 mkPS inp = PS { gss = mkGState l_0, curr_i = 0, input = inp }
 
@@ -99,12 +107,42 @@ l_1 = L "1" $ do
   createAtCurrent l_2
   goto l_s
   
-l_2 = L "2" $ undefined
-  -- TODO
+l_2 = L "2" $ do
+  (PS gss_ i inp) <- get
+  when (inp!!i == 'd') $ popCurrent
+  goto l_0
          
-l_s2 = undefined
-l_s3 = undefined
-l_a = undefined
+l_s2 = L "s2" $ do
+  createAtCurrent l_3
+  goto l_b
+  
+l_3 = L "3" $ do
+  createAtCurrent l_4
+  goto l_s
+  
+l_4 = L "4" $ do
+  popCurrent
+  goto l_0
+  
+l_s3 = L "s3" $ do
+  popCurrent
+  goto l_0
+  
+l_a = L "a" $ do
+  (PS gss_ i inp) <- get
+  if (inp!!i `elem` "ac") 
+    then do incr
+            popCurrent
+            goto l_0
+    else goto l_0
+
+l_b = L "b" $ do
+  (PS gss_ i inp) <- get
+  if (inp!!i `elem` "ab") 
+    then do incr
+            popCurrent
+            goto l_0
+    else goto l_0
 
 main = do
   let (ret, log) = evalRWS parse () (mkPS "aaad$")
