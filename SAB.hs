@@ -66,6 +66,12 @@ logState mark = do
   tell ". "
   ps <- get
   tellLn $ show ps
+  
+correct mark yu_ cu_ r_ inp_ = do  
+  (PS gss_ i inp) <- get  
+  when ( (drop i inp == inp_) && cu_ == curr_u gss_ && r_ == er gss_ && yu_ == yu gss_ ) $ do 
+    tellLn $ ">>>>> CORRECT TILL " ++ mark
+  
 --- Переложение стр. 119 ldta:
 mkPS inp = PS { gss = mkGState l_0, curr_i = 0, input = inp }
 
