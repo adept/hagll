@@ -72,6 +72,16 @@ correct mark yu_ cu_ r_ inp_ = do
   when ( (drop i inp == inp_) && cu_ == curr_u gss_ && r_ == er gss_ && yu_ == yu gss_ ) $ do 
     tellLn $ ">>>>> CORRECT TILL " ++ mark
   
+dumpGraph = do
+  gss_ <- gets gss
+  tellLn "digraph GSS {"
+  sequence_ [ tellLn (printf "%s -> %s;" (show_ a) (show_ b)) | (a,bs) <- M.assocs (parents gss_), b <- S.elems bs ]
+  tellLn "}"
+  where
+    show_ a = Prelude.map toUnderscore $ show a
+    toUnderscore ' ' = '_'
+    toUnderscore x = x
+    
 --- Переложение стр. 119 ldta:
 mkPS inp = PS { gss = mkGState l_0, curr_i = 0, input = inp }
 
@@ -125,7 +135,8 @@ l_0 = L "0" $ do
             goto label
             
     else if (l_0, Root,m) `S.member` (yu gss_)
-         then return Success
+         then do dumpGraph
+                 return Success
          else do tell "U is: "
                  tellLn (show $ yu gss_)
                  return Failure
