@@ -95,27 +95,27 @@ l_0 = L "0" $ do
       
   logState "l_0"
   correct "p.118, Similarly, processing (L3, [L00], 1) gives ..."
-    (fromList [(l_1,Node (l_0,0),1),(l_3,Node (l_0,0),1),(l_s1,Node (l_0,0),0),(l_s1,Node (l_2,1),1),(l_s1,Node (l_4,1),1),(l_s2,Node (l_0,0),0),(l_s2,Node (l_2,1),1),(l_s2,Node (l_4,1),1)]) -- U
-    (Node (l_4,1)) -- c_u
-    [(l_s2,Node (l_4,1),1),(l_s1,Node (l_4,1),1),(l_s2,Node (l_2,1),1),(l_s1,Node (l_2,1),1)] -- R
+    (fromList [(l_1,Node l_0 0,1),(l_3,Node l_0 0,1),(l_s1,Node l_0 0,0),(l_s1,Node l_2 1,1),(l_s1,Node l_4 1,1),(l_s2,Node l_0 0,0),(l_s2,Node l_2 1,1),(l_s2,Node l_4 1,1)]) -- U
+    (Node l_4 1) -- c_u
+    [(l_s2,Node l_4 1,1),(l_s1,Node l_4 1,1),(l_s2,Node l_2 1,1),(l_s1,Node l_2 1,1)] -- R
     "ad$" -- inp
     
   correct "p. 118, Processing each of these elements in turn results in ..." 
-    (fromList [(l_1,Node (l_0,0),1),(l_1,Node (l_2,1),2),(l_1,Node (l_4,1),2),(l_3,Node (l_0,0),1),(l_3,Node (l_2,1),2),(l_3,Node (l_4,1),2),(l_s1,Node (l_0,0),0),(l_s1,Node (l_2,1),1),(l_s1,Node (l_4,1),1),(l_s2,Node (l_0,0),0),(l_s2,Node (l_2,1),1),(l_s2,Node (l_4,1),1)])
-    (Node (l_3,1))
-    [(l_3,Node (l_4,1),2),(l_1,Node (l_4,1),2),(l_3,Node (l_2,1),2),(l_1,Node (l_2,1),2)]
+    (fromList [(l_1,Node l_0 0,1),(l_1,Node l_2 1,2),(l_1,Node l_4 1,2),(l_3,Node l_0 0,1),(l_3,Node l_2 1,2),(l_3,Node l_4 1,2),(l_s1,Node l_0 0,0),(l_s1,Node l_2 1,1),(l_s1,Node l_4 1,1),(l_s2,Node l_0 0,0),(l_s2,Node l_2 1,1),(l_s2,Node l_4 1,1)])
+    (Node l_3 1)
+    [(l_3,Node l_4 1,2),(l_1,Node l_4 1,2),(l_3,Node l_2 1,2),(l_1,Node l_2 1,2)]
     "d$"    
   
   correct "p. 118, Then, as I[2] = d, processing each of these results in ..." 
-    (fromList [(l_1,Node (l_0,0),1),(l_1,Node (l_2,1),2),(l_1,Node (l_4,1),2),(l_3,Node (l_0,0),1),(l_3,Node (l_2,1),2),(l_3,Node (l_4,1),2),(l_s1,Node (l_0,0),0),(l_s1,Node (l_2,1),1),(l_s1,Node (l_4,1),1),(l_s2,Node (l_0,0),0),(l_s2,Node (l_2,1),1),(l_s2,Node (l_4,1),1),(l_s3,Node (l_2,2),2),(l_s3,Node (l_4,2),2)]) 
-    (Node (l_4,2))
-    [(l_s3,Node (l_4,2),2),(l_s3,Node (l_2,2),2)]
+    (fromList [(l_1,Node l_0 0,1),(l_1,Node l_2 1,2),(l_1,Node l_4 1,2),(l_3,Node l_0 0,1),(l_3,Node l_2 1,2),(l_3,Node l_4 1,2),(l_s1,Node l_0 0,0),(l_s1,Node l_2 1,1),(l_s1,Node l_4 1,1),(l_s2,Node l_0 0,0),(l_s2,Node l_2 1,1),(l_s2,Node l_4 1,1),(l_s3,Node l_2 2,2),(l_s3,Node l_4 2,2)]) 
+    (Node l_4 2)
+    [(l_s3,Node l_4 2,2),(l_s3,Node l_2 2,2)]
     "d$"
 
   correct "p. 118, From this set we get..." 
-    (fromList [(l_1,Node (l_0,0),1),(l_1,Node (l_2,1),2),(l_1,Node (l_4,1),2),(l_2,Node (l_2,1),2),(l_2,Node (l_4,1),2),(l_3,Node (l_0,0),1),(l_3,Node (l_2,1),2),(l_3,Node (l_4,1),2),(l_4,Node (l_2,1),2),(l_4,Node (l_4,1),2),(l_s1,Node (l_0,0),0),(l_s1,Node (l_2,1),1),(l_s1,Node (l_4,1),1),(l_s2,Node (l_0,0),0),(l_s2,Node (l_2,1),1),(l_s2,Node (l_4,1),1),(l_s3,Node (l_2,2),2),(l_s3,Node (l_4,2),2)]) 
-    (Node (l_4,2))
-    [(l_4,Node (l_4,1),2),(l_4,Node (l_2,1),2),(l_2,Node (l_4,1),2),(l_2,Node (l_2,1),2)] 
+    (fromList [(l_1,Node l_0 0,1),(l_1,Node l_2 1,2),(l_1,Node l_4 1,2),(l_2,Node l_2 1,2),(l_2,Node l_4 1,2),(l_3,Node l_0 0,1),(l_3,Node l_2 1,2),(l_3,Node l_4 1,2),(l_4,Node l_2 1,2),(l_4,Node l_4 1,2),(l_s1,Node l_0 0,0),(l_s1,Node l_2 1,1),(l_s1,Node l_4 1,1),(l_s2,Node l_0 0,0),(l_s2,Node l_2 1,1),(l_s2,Node l_4 1,1),(l_s3,Node l_2 2,2),(l_s3,Node l_4 2,2)]) 
+    (Node l_4 2)
+    [(l_4,Node l_4 1,2),(l_4,Node l_2 1,2),(l_2,Node l_4 1,2),(l_2,Node l_2 1,2)] 
     "d$"
 
   if not (Prelude.null r) 

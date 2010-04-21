@@ -6,7 +6,7 @@ import Data.Map as M
 import Data.Set as S
 
 type Pos = Int
-data Node lab = Root | Node (lab, Pos) deriving (Eq,Ord,Show) -- TODO: remove Show in production
+data Node lab = Root | Node lab Pos deriving (Eq,Ord,Show) -- TODO: remove Show in production
 type R lab = [(lab, Node lab, Pos)]
 type U lab = Set (lab,Node lab,Pos)
 type P lab = Set (Node lab, Pos)
@@ -32,7 +32,7 @@ mkGState startLabel =
          }
   where
     u0 = Root
-    u1 = Node (startLabel, 0)
+    u1 = Node startLabel 0
 
 create :: (Eq lab, Ord lab) => lab -> Node lab -> Pos -> GState lab
        -> (GState lab, Node lab)
@@ -45,7 +45,7 @@ create label u i oldgs =
     where
     g = gee oldgs
     p = pe oldgs
-    v = Node (label, i)
+    v = Node label i
     insert_v gstate = gstate { gee = S.insert v g }
     connect_v gstate = gstate { parents = M.insertWith (S.union) v (S.singleton u) (parents gstate) }
     add_popped gstate = foldl (\gs j -> add label u j gs) gstate [ j | (x,j) <- S.elems p, x == v ]
@@ -62,7 +62,7 @@ add label u i oldgs =
 pop :: (Eq lab, Ord lab) => Node lab -> Pos -> GState lab -> GState lab
 pop u i oldgs = if u == Root then oldgs else newgs
     where
-    Node (label, _) = u
+    Node label _ = u
     prnts = parents oldgs
     update_pe gstate = gstate { pe = S.insert (u,i) (pe gstate) }
     create_descriptors gstate = foldl (\gs parent -> add label parent i gs) gstate (S.elems (prnts!u))
