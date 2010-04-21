@@ -8,7 +8,7 @@ import Data.Set as S
 type Pos = Int
 data Node lab = Root | Node (lab, Pos) deriving (Eq,Ord,Show) -- TODO: remove Show in production
 type R lab = [(lab, Node lab, Pos)]
-type U lab = Map Pos [(lab,Node lab)] -- TODO: flatten U, like Set (lab, Node lab, pos)
+type U lab = Set (lab,Node lab,Pos)
 type P lab = Set (Node lab, Pos)
 type G lab = Set (Node lab)
 type E lab = Map (Node lab) (Set (Node lab)) -- parents
@@ -28,7 +28,7 @@ mkGState startLabel =
          , curr_u = u1
          , pe = S.empty
          , er = []
-         , yu = M.empty
+         , yu = S.empty
          }
   where
     u0 = Root
@@ -50,15 +50,14 @@ create label u i oldgs =
     connect_v gstate = gstate { parents = M.insertWith (S.union) v (S.singleton u) (parents gstate) }
     add_popped gstate = foldl (\gs j -> add label u j gs) gstate [ j | (x,j) <- S.elems p, x == v ]
 
-add :: (Eq lab) => lab -> Node lab -> Pos -> GState lab -> GState lab
+add :: (Eq lab, Ord lab) => lab -> Node lab -> Pos -> GState lab -> GState lab
 add label u i oldgs =
-    if not ((label,u) `elem` u_i)
-        then oldgs {er = (label, u, i):r, yu = M.insertWith (++) i [(label,u)] yu_}
+    if not ((label,u,i) `S.member` yu_)
+        then oldgs {er = (label, u, i):r, yu = S.insert (label,u,i) yu_}
         else oldgs
     where
     r = er oldgs
     yu_ = yu oldgs
-    u_i = maybe [] id $ M.lookup i yu_
 
 pop :: (Eq lab, Ord lab) => Node lab -> Pos -> GState lab -> GState lab
 pop u i oldgs = if is_root then oldgs else newgs
