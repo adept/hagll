@@ -96,7 +96,7 @@ l_0 = L "0" $ do
   gss_ <- gets gss
   inp <- gets input
   let r = er gss_
-  let m = length inp + 1
+  let m = length inp - 1
       
   logState "l_0"
   if not (Prelude.null r) 
