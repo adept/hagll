@@ -1,5 +1,5 @@
 module GSS
- ( GState(yu,curr_u,er,parents), Pos, Node, Descriptor, create, add, pop, mkGState )
+ ( GState(curr_u,parents), Pos, Node, Descriptor, create, add, pop, fetchDescriptor, mkGState )
 where
 
 import Data.Map as M
@@ -39,6 +39,16 @@ mkGState startLabel =
   where
     u0 = Root
     u1 = Node startLabel 0
+
+-- | Fetch descriptor from the /R/ set. Return 'Nothing' if /R/ is empty.
+-- If /R/ is not empty, it is undefined what descriptor from the /R/ set will be
+-- returned.
+-- If a descriptor is returned, it is removed from /R/.
+fetchDescriptor :: GState lab -> (GState lab, Maybe (Descriptor lab))
+fetchDescriptor gstate =
+    case er gstate of
+        [] -> (gstate, Nothing)
+        d:ds -> (gstate { er = ds }, Just d)
 
 -- | @create l u i@ ensures that:
 --
