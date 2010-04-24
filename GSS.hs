@@ -27,18 +27,15 @@ data GState lab = GState
     }
 
 -- | Creates initial 'GState'
-mkGState :: (Eq lab, Ord lab) => lab -> GState lab
-mkGState startLabel =
-  GState { gee = S.fromList [ u0, u1 ]
-         , parents = M.singleton u1 (S.singleton u0)
-         , curr_u = u1
+mkGState :: GState lab
+mkGState =
+  GState { gee = S.singleton Root
+         , parents = M.empty
+         , curr_u = Root
          , pe = S.empty
          , er = []
          , yu = S.empty
          }
-  where
-    u0 = Root
-    u1 = Node startLabel 0
 
 -- | Fetch descriptor from the /R/ set. Return 'Nothing' if /R/ is empty.
 -- If /R/ is not empty, it is undefined what descriptor from the /R/ set will be
