@@ -1,5 +1,5 @@
 module GSS
- ( GState(curr_u,parents), Pos, Node, Descriptor, create, add, pop, fetchDescriptor, mkGState )
+ ( GState, Pos, Descriptor, create, add, pop, fetchDescriptor, mkGState )
 where
 
 import Data.Map as M
@@ -43,36 +43,41 @@ mkGState startLabel =
 -- | Fetch descriptor from the /R/ set. Return 'Nothing' if /R/ is empty.
 -- If /R/ is not empty, it is undefined what descriptor from the /R/ set will be
 -- returned.
--- If a descriptor is returned, it is removed from /R/.
+-- If a descriptor is returned, it is removed from /R/, and current node is
+-- updated.
 fetchDescriptor :: GState lab -> (GState lab, Maybe (Descriptor lab))
 fetchDescriptor gstate =
     case er gstate of
         [] -> (gstate, Nothing)
-        d:ds -> (gstate { er = ds }, Just d)
+        d@(_,u,_):ds -> (gstate { er = ds, curr_u = u }, Just d)
 
 -- | @create l u i@ ensures that:
 --
 -- * node @v@ with label @l@ and input position @i@ exists in GSS
 --
--- * node @v@ is a child of node @u@ (which should already exist)
+-- * node @v@ is a child of the current node
 --
 -- * if @v@ was already popped on position @i@, then descriptors are added to
 -- /R/, as if @pop@ was executed after @create@
-create :: (Eq lab, Ord lab) => lab -> Node lab -> Pos -> GState lab
-       -> (GState lab, Node lab)
-create label u i oldgs =
+--
+-- * node @v@ is made the current node
+create :: (Eq lab, Ord lab) => lab -> Pos -> GState lab
+       -> GState lab
+create label i oldgs =
     if v `S.member` g && u `S.member` (parents oldgs M.! v)
     then -- nothing to do
-        (oldgs, v)
+        oldgs
     else
-        (add_popped.connect_v.insert_v $ oldgs, v)
+        set_current.add_popped.connect_v.insert_v $ oldgs
     where
     g = gee oldgs
     p = pe oldgs
     v = Node label i
+    u = curr_u oldgs
     insert_v gstate = gstate { gee = S.insert v g }
     connect_v gstate = gstate { parents = M.insertWith (S.union) v (S.singleton u) (parents gstate) }
     add_popped gstate = foldl (\gs j -> add (label, u, j) gs) gstate [ j | (x,j) <- S.elems p, x == v ]
+    set_current gstate = gstate { curr_u = v }
 
 -- | Adds descriptor to /R/ if it hasn't been added yet
 add :: (Eq lab, Ord lab) => Descriptor lab -> GState lab -> GState lab
@@ -84,11 +89,12 @@ add desc oldgs =
     r = er oldgs
     yu_ = yu oldgs
 
--- | @pop u i@ adds descriptors (@label(u)@, @v@, @i@) to /R/ for every parent @v@ of
--- @u@.
-pop :: (Eq lab, Ord lab) => Node lab -> Pos -> GState lab -> GState lab
-pop u i oldgs = if u == Root then oldgs else newgs
+-- | @pop i@ adds descriptors (@label(u)@, @v@, @i@) to /R/ for every parent @v@ of
+-- @u@, where @u@ is the current node.
+pop :: (Eq lab, Ord lab) => Pos -> GState lab -> GState lab
+pop i oldgs = if u == Root then oldgs else newgs
     where
+    u = curr_u oldgs
     Node label _ = u
     prnts = parents oldgs
     update_pe gstate = gstate { pe = S.insert (u,i) (pe gstate) }
