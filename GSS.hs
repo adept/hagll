@@ -1,5 +1,5 @@
 module GSS
- ( GState, Pos, Descriptor, create, add, pop, fetchDescriptor, mkGState )
+ ( GState, Pos, create, add, pop, fetchDescriptor, mkGState )
 where
 
 import Data.Map as M
@@ -45,11 +45,11 @@ mkGState startLabel =
 -- returned.
 -- If a descriptor is returned, it is removed from /R/, and current node is
 -- updated.
-fetchDescriptor :: GState lab -> (GState lab, Maybe (Descriptor lab))
+fetchDescriptor :: GState lab -> (GState lab, Maybe (lab, Pos))
 fetchDescriptor gstate =
     case er gstate of
         [] -> (gstate, Nothing)
-        d@(_,u,_):ds -> (gstate { er = ds, curr_u = u }, Just d)
+        d@(l,u,i):ds -> (gstate { er = ds, curr_u = u }, Just (l,i))
 
 -- | @create l u i@ ensures that:
 --
