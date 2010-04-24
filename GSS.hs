@@ -76,16 +76,29 @@ create label i oldgs =
     u = curr_u oldgs
     insert_v gstate = gstate { gee = S.insert v g }
     connect_v gstate = gstate { parents = M.insertWith (S.union) v (S.singleton u) (parents gstate) }
-    add_popped gstate = foldl (\gs j -> add (label, u, j) gs) gstate [ j | (x,j) <- S.elems p, x == v ]
+    add_popped gstate = foldl (\gs j -> add1 (label, u, j) gs) gstate [ j | (x,j) <- S.elems p, x == v ]
     set_current gstate = gstate { curr_u = v }
 
 -- | Adds descriptor to /R/ if it hasn't been added yet
-add :: (Eq lab, Ord lab) => Descriptor lab -> GState lab -> GState lab
-add desc oldgs =
+--
+-- For internal use only! Outside the module use 'add'
+add1 :: (Eq lab, Ord lab) => Descriptor lab -> GState lab -> GState lab
+add1 desc oldgs =
     if not (desc `S.member` yu_)
         then oldgs {er = desc:r, yu = S.insert desc yu_}
         else oldgs
     where
+    r = er oldgs
+    yu_ = yu oldgs
+
+-- | Adds descriptor to /R/ if it hasn't been added yet
+add :: (Eq lab, Ord lab) => lab -> Pos -> GState lab -> GState lab
+add l i oldgs =
+    if not (desc `S.member` yu_)
+        then oldgs {er = desc:r, yu = S.insert desc yu_}
+        else oldgs
+    where
+    desc = (l, curr_u oldgs, i)
     r = er oldgs
     yu_ = yu oldgs
 
@@ -98,5 +111,5 @@ pop i oldgs = if u == Root then oldgs else newgs
     Node label _ = u
     prnts = parents oldgs
     update_pe gstate = gstate { pe = S.insert (u,i) (pe gstate) }
-    create_descriptors gstate = foldl (\gs parent -> add (label, parent, i) gs) gstate (S.elems (prnts!u))
+    create_descriptors gstate = foldl (\gs parent -> add1 (label, parent, i) gs) gstate (S.elems (prnts!u))
     newgs = create_descriptors . update_pe $ oldgs
