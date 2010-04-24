@@ -1,5 +1,5 @@
 module GSS
- ( GState(yu,curr_u,er,parents), Pos, Node, create, add, pop, mkGState )
+ ( GState(yu,curr_u,er,parents), Pos, Node, Descriptor, create, add, pop, mkGState )
 where
 
 import Data.Map as M
@@ -9,6 +9,7 @@ import Data.Set as S
 type Pos = Int
 -- | Type of GSS node. Nodes should be created using 'create'
 data Node lab = Root | Node lab Pos deriving (Eq,Ord,Show) -- TODO: remove Show in production
+type Descriptor lab = (lab, Node lab, Pos)
 type R lab = [(lab, Node lab, Pos)]
 type U lab = Set (lab,Node lab,Pos)
 type P lab = Set (Node lab, Pos)
@@ -61,13 +62,13 @@ create label u i oldgs =
     v = Node label i
     insert_v gstate = gstate { gee = S.insert v g }
     connect_v gstate = gstate { parents = M.insertWith (S.union) v (S.singleton u) (parents gstate) }
-    add_popped gstate = foldl (\gs j -> add label u j gs) gstate [ j | (x,j) <- S.elems p, x == v ]
+    add_popped gstate = foldl (\gs j -> add (label, u, j) gs) gstate [ j | (x,j) <- S.elems p, x == v ]
 
--- | @add l u i@ adds descriptor (@l@,@u@,@i@) to /R/ if it hasn't been added yet
-add :: (Eq lab, Ord lab) => lab -> Node lab -> Pos -> GState lab -> GState lab
-add label u i oldgs =
-    if not ((label,u,i) `S.member` yu_)
-        then oldgs {er = (label, u, i):r, yu = S.insert (label,u,i) yu_}
+-- | Adds descriptor to /R/ if it hasn't been added yet
+add :: (Eq lab, Ord lab) => Descriptor lab -> GState lab -> GState lab
+add desc oldgs =
+    if not (desc `S.member` yu_)
+        then oldgs {er = desc:r, yu = S.insert desc yu_}
         else oldgs
     where
     r = er oldgs
@@ -81,5 +82,5 @@ pop u i oldgs = if u == Root then oldgs else newgs
     Node label _ = u
     prnts = parents oldgs
     update_pe gstate = gstate { pe = S.insert (u,i) (pe gstate) }
-    create_descriptors gstate = foldl (\gs parent -> add label parent i gs) gstate (S.elems (prnts!u))
+    create_descriptors gstate = foldl (\gs parent -> add (label, parent, i) gs) gstate (S.elems (prnts!u))
     newgs = create_descriptors . update_pe $ oldgs
