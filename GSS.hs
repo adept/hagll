@@ -28,7 +28,7 @@ data GState lab = GState
 
 -- | Creates initial 'GState'
 mkGState :: (Eq lab, Ord lab) => lab -> GState lab
-mkGState startLabel = 
+mkGState startLabel =
   GState { gee = S.fromList [ u0, u1 ]
          , parents = M.singleton u1 (S.singleton u0)
          , curr_u = u1
