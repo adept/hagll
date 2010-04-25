@@ -7,17 +7,25 @@ import Test.HUnit
 
 import Data.List
 
-import qualified SAB
+import Grammar
 
 main = defaultMain tests
 
 tests = [
   testGroup "SAB grammar from ldta" [
-     testCase "aad OK" (test_sab "aad" SAB.Success),
-     testCase "acd OK" (test_sab "acd" SAB.Success),
-     testCase "add Fails" (test_sab "add" SAB.Failure)
+     testCase "aad OK" (test_sab "aad" True),
+     testCase "acd OK" (test_sab "acd" True),
+     testCase "add Fails" (test_sab "add" False)
      ]
   ]
 
 -- SAB grammar
-test_sab input expected = SAB.parse input @?= expected
+sab =
+    [ ("S", [[Nonterminal "A", Nonterminal "S", Terminal 'd']
+            ,[Nonterminal "B", Nonterminal "S"]
+            ,[]
+            ])
+    , ("A", [[Terminal 'a'], [Terminal 'c']])
+    , ("B", [[Terminal 'a'], [Terminal 'b']])
+    ]
+test_sab input expected = parse sab input @?= expected
