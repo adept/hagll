@@ -17,6 +17,7 @@ tests = [
      testCase "acd OK" (test_sab "acd" True),
      testCase "add Fails" (test_sab "add" False)
      ]
+     , testGroup "Another test grammar" gr_tests
   ]
 
 -- SAB grammar
@@ -29,3 +30,18 @@ sab =
     , ("B", [[Terminal 'a'], [Terminal 'b']])
     ]
 test_sab input expected = parse sab input @?= expected
+
+-- another grammar
+gr =
+    [ ("S", [[Nonterminal "A", Terminal 'b']
+            ,[Nonterminal "A", Terminal 'c']
+            ,[Nonterminal "A"]
+            ])
+    , ("A", [[Terminal 'a']])
+    ]
+
+gr_tests = flip map testData $
+    \(str, res) -> testCase
+        ("parse gr \""++str++"\" is " ++ show res)
+        (parse gr str @?= res)
+    where testData = [("",False),("a",True),("b",False),("ab",True),("c",False),("ac",True),("abc",False)]
