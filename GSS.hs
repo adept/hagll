@@ -68,7 +68,7 @@ create label i oldgs =
     then -- nothing to do
         (oldgs, False)
     else
-        (set_current.add_popped.connect_v.insert_v $ oldgs, node_exists)
+        (set_current.add_popped.connect_v.insert_v $ oldgs, not node_exists)
     where
     node_exists = v `S.member` g
     g = gee oldgs

@@ -200,9 +200,10 @@ parse_alternate (sym:rest) = do
                     parse_alternate rest
                 else l_0
         LNonterminal i nt -> do
-            create (Return nt i) (parse_alternate rest)
-            parse_nt nt -- XXX we don't need this
-                        -- if the node is already created
+            isNew <- create (Return nt i) (parse_alternate rest)
+            if isNew
+                then parse_nt nt
+                else l_0
 
 -- | Tries to parse nonterminal by scheduling 'parse_alternate' for each
 -- alternate.
