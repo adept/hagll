@@ -38,7 +38,9 @@ gr =
             ,[Nonterminal "A", Terminal 'c']
             ,[Nonterminal "A"]
             ])
-    , ("A", [[Terminal 'a']])
+    , ("A",  [[Nonterminal "A1"]])
+    , ("A1", [[Nonterminal "A2"]])
+    , ("A2", [[Terminal 'a']])
     ]
 
 gr_tests = flip map testData $
