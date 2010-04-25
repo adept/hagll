@@ -18,6 +18,7 @@ tests = [
      testCase "add Fails" (test_sab "add" False)
      ]
      , testGroup "Another test grammar" gr_tests
+     , testGroup "Simple recurisve grammar" rec_tests
   ]
 
 -- SAB grammar
@@ -45,3 +46,14 @@ gr_tests = flip map testData $
         ("parse gr \""++str++"\" is " ++ show res)
         (parse gr str @?= res)
     where testData = [("",False),("a",True),("b",False),("ab",True),("c",False),("ac",True),("abc",False)]
+
+-- simple recursive grammar with epsilon-production
+rec = [ ("S", [[Nonterminal "S", Terminal 'a'], []]) ]
+rec_tests = flip map testData $
+    \(str, res) -> testCase
+        ("parse rec \""++str++"\" is " ++ show res)
+        (parse rec str @?= res)
+    where
+    testData =
+        [(replicate n 'a', True) | n <- [0..10]] ++
+        [(s,False) | s <- ["ab","ba","b","aab"]]
