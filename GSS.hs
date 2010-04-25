@@ -58,15 +58,19 @@ fetchDescriptor gstate =
 -- /R/, as if @pop@ was executed after @create@
 --
 -- * node @v@ is made the current node
+--
+-- 'create' returns an updated GSS and an indicator whether new node has been
+-- created (True) or the node already existed
 create :: (Eq lab, Ord lab) => lab -> Pos -> GState lab
-       -> GState lab
+       -> (GState lab, Bool)
 create label i oldgs =
-    if v `S.member` g && u `S.member` (parents oldgs M.! v)
+    if node_exists && u `S.member` (parents oldgs M.! v)
     then -- nothing to do
-        oldgs
+        (oldgs, False)
     else
-        set_current.add_popped.connect_v.insert_v $ oldgs
+        (set_current.add_popped.connect_v.insert_v $ oldgs, node_exists)
     where
+    node_exists = v `S.member` g
     g = gee oldgs
     p = pe oldgs
     v = Node label i

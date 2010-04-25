@@ -158,9 +158,9 @@ modifyGSS f = do
 pop :: ParseM ()
 pop = gets index >>= modifyGSS . GSS.pop
 
-create :: LabelId -> Code -> ParseM ()
+create :: LabelId -> Code -> ParseM Bool
 create Alternate{} _ = error $ "Alternate cannot be used in GSS node"
-create l c = gets index >>= modifyGSS . GSS.create (L l c)
+create l c = gets index >>= askAndModifyGSS . GSS.create (L l c)
 
 add :: LabelId -> Code -> ParseM()
 add l c = gets index >>= modifyGSS . GSS.add (L l c)
