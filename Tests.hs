@@ -48,6 +48,24 @@ g1 =
     ]
 test_g1 = parse g1 (concat [replicate 20 'a', replicate 150 'b', "a"]) @?= True
 
+-- Grammar Г2 from ldta paper
+g2 =
+    [ ("S", [[Terminal 'b']
+            ,[Nonterminal "S", Nonterminal "S"]
+            ,[Nonterminal "S", Nonterminal "S", Nonterminal "S"]
+            ])
+    ]
+test_g2 n = parse g2 (replicate n 'b') @?= True
+
+-- Grammar Г2* from ldta paper
+g2star =
+    [ ("S", [[Terminal 'b']
+            ,[Nonterminal "S", Nonterminal "S", Nonterminal "A"]]),
+      ("A", [[Nonterminal "S"]
+            ,[]])
+    ]
+test_g2star n = parse g2star (replicate n 'b') @?= True
+
 -- another grammar
 gr =
     [ ("S", [[Nonterminal "A", Terminal 'b']
