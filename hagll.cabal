@@ -28,6 +28,7 @@ Executable  Tests
   if flag(test)
     Build-Depends: base >=3 && <=5, HUnit, QuickCheck >= 2.0.0 , test-framework, test-framework-quickcheck2, test-framework-hunit, mtl, containers
     Other-Modules: GSS, Grammar
+    GHC-Options: -O2 -prof -auto-all
   else
     Buildable: False
 
@@ -37,6 +38,6 @@ Executable  CoverageTests
   if flag(coverage)
     Build-Depends: base >=3 && <=5, mtl, containers
     Other-Modules: GSS, Grammar
-    GHC-Options: -fhpc
+    GHC-Options: -fhpc -O2
   else
     Buildable: False
