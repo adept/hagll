@@ -17,11 +17,14 @@ tests = [
      testCase "acd OK" (test_sab "acd" True),
      testCase "add Fails" (test_sab "add" False)
      ]
-     , testGroup "Another test grammar" gr_tests
-     , testGroup "Simple recurisve grammar" rec_tests
+  , testGroup "G1 grammar from ldta" [
+     testCase "a^20 b^150 a OK" test_g1
+     ]
+  , testGroup "Another test grammar" gr_tests
+  , testGroup "Simple recurisve grammar" rec_tests
   ]
 
--- SAB grammar
+-- SAB grammar from ldta paper
 sab =
     [ ("S", [[Nonterminal "A", Nonterminal "S", Terminal 'd']
             ,[Nonterminal "B", Nonterminal "S"]
@@ -31,6 +34,19 @@ sab =
     , ("B", [[Terminal 'a'], [Terminal 'b']])
     ]
 test_sab input expected = parse sab input @?= expected
+
+-- Grammar Г1 from ldta paper
+g1 =
+    [ ("S", [[Nonterminal "C", Terminal 'a']
+            ,[Terminal 'd']
+            ])
+    , ("B",  [[]
+             ,[Terminal 'a']])
+    , ("C", [[Terminal 'b']
+            ,[Nonterminal "B",Nonterminal "C", Terminal 'b']
+            ,[Terminal 'b', Terminal 'b']])
+    ]
+test_g1 = parse g1 (concat [replicate 20 'a', replicate 150 'b', "a"]) @?= True
 
 -- another grammar
 gr =
