@@ -19,8 +19,8 @@ tests = [
      testCase "Г1:  (a^20)(b^150)(a) OK" test_g1
      ]
   , testGroup "Slooooooow tests (from ldta)" [
-     testCase "Г2*: (b^50) OK" (test_g2star 50)
-     , testCase "Г2:  (b^20) OK" (test_g2 20)
+     testCase "Г2:  (b^20) OK" (test_g2 20)
+     , testCase "Г2*: (b^300) OK" (test_g2star 300)
      ]
   , testGroup "Grammar from GLR parsing in Haskell" [
     testCase "(b^20) is OK" (test_glr 20),
