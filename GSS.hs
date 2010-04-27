@@ -1,5 +1,5 @@
 module GSS
- ( GState, Pos, create, add, pop, fetchDescriptor, mkGState )
+ ( GState, Pos, create, add, pop, fetchDescriptor, mkGState, describeGState )
 where
 
 import Data.Map as M
@@ -36,6 +36,10 @@ mkGState =
          , er = []
          , yu = S.empty
          }
+
+describeGState gss_ =
+  (S.size (gee gss_), sum (Prelude.map S.size $ M.elems $ parents gss_), S.size (yu gss_))
+    
 
 -- | Fetch descriptor from the /R/ set. Return 'Nothing' if /R/ is empty.
 -- If /R/ is not empty, it is undefined what descriptor from the /R/ set will be
