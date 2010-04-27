@@ -3,10 +3,11 @@ module Grammar (
   Symbol(..), Production, Grammar, parse
 ) where
 import Control.Monad.State
-import GSS (GState)
+import GSS (GState, describeGState)
 import qualified GSS
 import qualified Data.Map as M
 import Data.List
+import Debug.Trace
 
 -- * User interface
 -- | This is how user specifies the grammar using BNF -- as a list of
@@ -31,8 +32,9 @@ data Symbol = Terminal Char | Nonterminal String
 
 -- | Recognizes whether the given input string is produced by the grammar
 parse :: Grammar -> String -> Bool
-parse gr str = evalState go state
+parse gr str = traceShow (describeGState (gstate endState)) result
     where
+    (result, endState) = runState go state
     go = do
         create Finish finish
         parse_nt (fst.head$gr)
@@ -145,7 +147,7 @@ askAndModifyGSS :: (GState L -> (GState L,a)) -> ParseM a
 askAndModifyGSS f = do
     s@PState{gstate = oldgs} <- get
     let (newgs,ret) = f oldgs
-    put $ s { gstate = newgs }
+    put $ s { gstate = traceShow (describeGState newgs) newgs }
     return ret
 
 modifyGSS :: (GState L -> GState L) -> ParseM ()
