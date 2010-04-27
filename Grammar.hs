@@ -147,7 +147,7 @@ askAndModifyGSS :: (GState L -> (GState L,a)) -> ParseM a
 askAndModifyGSS f = do
     s@PState{gstate = oldgs} <- get
     let (newgs,ret) = f oldgs
-    put $ s { gstate = traceShow (describeGState newgs) newgs }
+    put $ s { gstate = newgs }
     return ret
 
 modifyGSS :: (GState L -> GState L) -> ParseM ()
