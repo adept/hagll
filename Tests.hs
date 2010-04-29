@@ -17,8 +17,8 @@ tests = [
      testCase "SAB: acd OK" (test_sab "acd" True),
      testCase "SAB: add Fails" (test_sab "add" False),
      testCase "Г1:  (a^20)(b^150)(a) OK" test_g1,
-     testCase "Г2*: (b^20) OK" (test_g2star 20),
-     testCase "Г2:  (b^20) OK" (test_g2 20)
+     testCase "Г2*: (b^100) OK" (test_g2star 100),
+     testCase "Г2:  (b^50) OK" (test_g2 50)
      ]
   , testGroup "Grammar from GLR parsing in Haskell" [
     testCase "(b^20) is OK" (test_glr 20),
