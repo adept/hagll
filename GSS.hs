@@ -4,6 +4,7 @@ where
 
 import Data.Map as M
 import Data.Set as S
+import Data.List
 
 -- | Position in the input stream
 type Pos = Int
@@ -77,7 +78,7 @@ create label i oldgs =
     u = curr_u oldgs
     insert_v gstate = gstate { gee = S.insert v g }
     connect_v gstate = gstate { parents = M.insertWith (S.union) v (S.singleton u) (parents gstate) }
-    add_popped gstate = foldl (\gs j -> add1 (label, u, j) gs) gstate [ j | (x,j) <- S.elems p, x == v ]
+    add_popped gstate = foldl' (\gs j -> add1 (label, u, j) gs) gstate [ j | (x,j) <- S.elems p, x == v ]
     set_current gstate = gstate { curr_u = v }
 
 -- | Adds descriptor to /R/ if it hasn't been added yet
