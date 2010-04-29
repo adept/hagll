@@ -4,6 +4,7 @@ where
 
 import Data.Map as M
 import Data.Set as S
+import Data.Maybe
 import Data.List
 
 -- | Position in the input stream
@@ -13,7 +14,7 @@ data Node lab = Root | Node lab Pos deriving (Eq,Ord,Show) -- TODO: remove Show 
 type Descriptor lab = (lab, Node lab, Pos)
 type R lab = [(lab, Node lab, Pos)]
 type U lab = Set (lab,Node lab,Pos)
-type P lab = Set (Node lab, Pos)
+type P lab = Map (Node lab) [Pos]
 type G lab = Set (Node lab)
 type E lab = Map (Node lab) (Set (Node lab)) -- parents
 
@@ -33,7 +34,7 @@ mkGState =
   GState { gee = S.singleton Root
          , parents = M.empty
          , curr_u = Root
-         , pe = S.empty
+         , pe = M.empty
          , er = []
          , yu = S.empty
          }
@@ -78,7 +79,8 @@ create label i oldgs =
     u = curr_u oldgs
     insert_v gstate = gstate { gee = S.insert v g }
     connect_v gstate = gstate { parents = M.insertWith (S.union) v (S.singleton u) (parents gstate) }
-    add_popped gstate = foldl' (\gs j -> add1 (label, u, j) gs) gstate [ j | (x,j) <- S.elems p, x == v ]
+    add_popped gstate = foldl' (\gs j -> add1 (label, u, j) gs) gstate popped
+    popped = fromMaybe [] (M.lookup v p)
     set_current gstate = gstate { curr_u = v }
 
 -- | Adds descriptor to /R/ if it hasn't been added yet
@@ -112,6 +114,6 @@ pop i oldgs = if u == Root then oldgs else newgs
     u = curr_u oldgs
     Node label _ = u
     prnts = parents oldgs
-    update_pe gstate = gstate { pe = S.insert (u,i) (pe gstate) }
+    update_pe gstate = gstate { pe = M.insertWith (++) u [i] (pe gstate) }
     create_descriptors gstate = foldl (\gs parent -> add1 (label, parent, i) gs) gstate (S.elems (prnts!u))
     newgs = create_descriptors . update_pe $ oldgs
